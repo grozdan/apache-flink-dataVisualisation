@@ -3,6 +3,7 @@
 
 <div id="container" style="position: relative; width: 100%; height: 100%;"></div>
 <div class="container panel panel-success" style="margin-top:15px; ">
-  <label>Total tweets: {{counter}}</label>
-  <textarea readonly rows="5" style="width: 100%; border: none;">{{textArea}}</textarea>
+  <label class="pull-left">Total tweets: {{counter}}</label>
+  <label class="pull-right">Tweets with location: {{locationCounter}}</label>
+  <textarea readonly id="textArea" rows="5" style="width: 100%; border: none;">{{textArea}}</textarea>
 </div>

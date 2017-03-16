@@ -14,6 +14,8 @@
     var tweetCounter = 0;
     $scope.textArea = "";
     $scope.counter = 0;
+    $scope.processedTweets = [];
+    $scope.locationCounter = 0;
     var counterLocationTweets = 0;
     var bombs = [];
 
@@ -53,7 +55,8 @@
     var client = Stomp.over(ws);
 
     window.onload = function () {
-
+      // var txtArea = document.getElementById('textArea');
+      // txtArea.scrollTop = txtArea.scrollHeight;
       map = new Datamap({
         element: document.getElementById('container'),
         done: function (datamap) {
@@ -74,13 +77,22 @@
         on_connect_error,
         mq_vhost);
 
-    }
+    };
 
     function createBubble(message) {
+      $scope.processedTweets.push(message.name);
+      if ($scope.processedTweets.length > 100) {
+        $scope.processedTweets.splice(0, 1);
+      }
+
+      $scope.$apply(function () {
+        $scope.textArea = getTextForTweets();
+      });
+
       if (message.latitude != undefined) {
         counterLocationTweets += 1;
         $scope.$apply(function () {
-          $scope.textArea = $scope.textArea += counterLocationTweets + ". " + message.name + '\n';
+          $scope.locationCounter = counterLocationTweets;
         });
         var newBuuble = {};
         newBuuble.name = message.name;
@@ -91,6 +103,15 @@
         return newBuuble;
       }
       return undefined;
+    }
+
+    function getTextForTweets() {
+
+      var text = "";
+      for (var i = 0; i < $scope.processedTweets.length; i++) {
+        text += $scope.processedTweets[i] + '\n';
+      }
+      return text
     }
   }
 })(angular);
