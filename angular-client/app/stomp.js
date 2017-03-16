@@ -271,7 +271,7 @@
             return;
           }
           if (typeof _this.debug === "function") {
-            _this.debug("<<< " + data);
+            //_this.debug("<<< " + data);
           }
           unmarshalledData = Frame.unmarshall(_this.partialData + data);
           _this.partialData = unmarshalledData.partial;
