@@ -1,4 +1,3 @@
-
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var templateCache = require('gulp-angular-templatecache');
@@ -9,17 +8,13 @@ var fs = require("fs");
 
 var JS_APP = [
   'app/app.js',
-  'app/c1/c1.state.js',
+  'app/word-cloud/wordCloud.state.js',
   'app/flink/flink.state.js',
   'app/flink/flink.controller.js',
-  'app/c1/first.controller.js',
-  'app/c1/second.controller.js',
-  'app/group/group.state.js',
-  'app/group/group.controller.js',
-  'app/group/group.remote.factory.js',
+  'app/word-cloud/wordCloud.controller.js',
+
 
   'app/default-page/**.js',
-  'app/directives/wp-combo/wp-combo.directive.js',
 ];
 
 var TEMPLATES_SRC = [
@@ -42,7 +37,6 @@ var CSS_LIB = [
   'bower_components/components-font-awesome/css/font-awesome.min.css',
   'bower_components/angular-ui-select/dist/select.css'];
 
-
 var JS_LIB = [
   'bower_components/jquery/dist/jquery.min.js',
   'bower_components/bootstrap/dist/js/bootstrap.min.js',
@@ -51,9 +45,12 @@ var JS_LIB = [
   'bower_components/angular-ui-router/release/angular-ui-router.js',
   'bower_components/angular-ui-select/dist/select.js',
   'bower_components/angular-resource/angular-resource.js',
+  'node_modules/d3/d3.min.js',
+  'node_modules/d3/node_modules/d3/d3.min.js',
+  'node_modules/d3-cloud/build/d3.layout.cloud.js',
+  'node_modules/angular-d3-word-cloud/dist/angular-word-cloud.min.js'
   //'node_modules/sockjs/lib/sockjs.js'
 ];
-
 
 /**
  *   The location of the resources for deploy

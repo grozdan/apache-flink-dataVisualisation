@@ -5,7 +5,8 @@
     .module('angular-client', [
       'ui.router',
       'ui.select',
-      'ngResource'
+      'ngResource',
+      'angular-d3-word-cloud'
     ]);
 
 })(angular);

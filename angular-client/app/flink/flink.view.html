@@ -1,9 +1,26 @@
-<h1>Flink page</h1>
-<hr/>
-
-<div id="container" style="position: relative; width: 100%; height: 100%;"></div>
-<div class="container panel panel-success" style="margin-top:15px; ">
-  <label class="pull-left">Total tweets: {{counter}}</label>
-  <label class="pull-right">Tweets with location: {{locationCounter}}</label>
-  <textarea readonly id="textArea" rows="5" style="width: 100%; border: none;">{{textArea}}</textarea>
+<div id="container" style="position: relative; width: 100%; height: 75%;"></div>
+<div class="col-md-2" style="margin-top:-20%; margin-left:1%">
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Country</th>
+      <th>Tweets</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in tweetsPerCountry">
+      <th scope="row">{{$index+1}}</th>
+      <td>{{:: row.name}}</td>
+      <td>{{:: row.size}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="row">
+  <div class="panel panel-success col-md-offset-3 col-md-7">
+    <label class="pull-left">Total tweets: {{counter}}</label>
+    <label class="pull-right">Tweets with location: {{locationCounter}}</label>
+    <textarea readonly id="textArea" rows="5" style="width: 100%; border: none;">{{textArea}}</textarea>
+  </div>
 </div>

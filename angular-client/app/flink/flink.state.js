@@ -7,7 +7,7 @@
 
   registerState.$inject = ['$stateProvider'];
 
-  function registerState($stateProvider) {
+  function registerState($stateProvider ) {
 
     $stateProvider.state('flink', {
       url: '/flink',

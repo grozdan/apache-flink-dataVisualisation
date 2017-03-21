@@ -5,15 +5,14 @@
     .module('angular-client')
     .config(registerState);
 
-
   registerState.$inject = ['$stateProvider'];
 
   function registerState($stateProvider) {
 
-    $stateProvider.state('group', {
-      url: '/groups',
-      templateUrl: 'app/group/group.view.html',
-      controller: 'GroupController',
+    $stateProvider.state('wordCloud', {
+      url: '/wordCloud',
+      templateUrl: 'app/word-cloud/wordCloud.view.html',
+      controller: 'WordCloudController',
       controllerAs: 'vm'
     });
   }
