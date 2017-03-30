@@ -40,7 +40,7 @@
 
         </property>
         <property name="persistenceUnitName" value="wp"/>
-        <property name="packagesToScan" value="finki.gm.diplomska.model"/>
+        <property name="packagesToScan" value="finki.gm.diplomska"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
@@ -54,7 +54,7 @@
             class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
 
-    <context:component-scan base-package="finki.gm.diplomska.persistence"/>
+    <jpa:repositories base-package="finki.gm.diplomska.repository" />
 
     <tx:annotation-driven/>
 </beans>

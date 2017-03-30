@@ -1,26 +1,29 @@
-<div id="container" style="position: relative; width: 100%; height: 75%;"></div>
-<div class="col-md-2" style="margin-top:-20%; margin-left:1%">
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th>#</th>
-      <th>Country</th>
-      <th>Tweets</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="row in tweetsPerCountry">
-      <th scope="row">{{$index+1}}</th>
-      <td>{{:: row.name}}</td>
-      <td>{{:: row.size}}</td>
-    </tr>
-    </tbody>
-  </table>
-</div>
-<div class="row">
-  <div class="panel panel-success col-md-offset-3 col-md-7">
-    <label class="pull-left">Total tweets: {{counter}}</label>
-    <label class="pull-right">Tweets with location: {{locationCounter}}</label>
-    <textarea readonly id="textArea" rows="5" style="width: 100%; border: none;">{{textArea}}</textarea>
+<div id="container" style="position: relative; width: 100%; height: 75%; background-color: #e6f7ff;"></div>
+<div class="row" style="background-color: #e6f7ff">
+  <div class="col-md-2" style="margin-top:-20%; margin-left:1%">
+    <table class="table table-striped"
+           style="max-height: 280px; font-weight: bold; overflow-y: scroll; display:table-caption; overflow-x: hidden; border: 2px solid #d6e9c6;">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Country</th>
+        <th>Tweets</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="row in tweetsPerCountry">
+        <td>{{$index+1}}</td>
+        <td>{{:: row.name}}</td>
+        <td>{{:: row.size}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel panel-success col-md-offset-3 col-md-7" style="background-color: #000000;">
+    <label class="pull-left" style="color: white">Total tweets: {{counter}}</label>
+    <label class="pull-right" style="color: white">Tweets with location: {{locationCounter}}</label>
+    <textarea readonly id="textArea" rows="5"
+              style="width: 100%; background-color: #000000; color: #00b300; border: none;">{{textArea}}</textarea>
   </div>
 </div>

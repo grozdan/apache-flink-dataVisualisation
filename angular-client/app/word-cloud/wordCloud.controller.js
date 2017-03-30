@@ -5,25 +5,18 @@
     .module('angular-client')
     .controller('WordCloudController', WordCloudController);
 
-  WordCloudController.$inject = ['$scope', '$location'];
+  WordCloudController.$inject = ['$scope', '$stateParams', '$state', '$rootScope', '$http'];
 
-  /* @ngInject */
-  function WordCloudController($scope, $location) {
+  function WordCloudController($scope, $stateParams, $state, $rootScope, $http) {
     var vm = this;
-
     $scope.words = [];
 
-    $scope.wordClicked = function (word) {
-      alert('text: ' + word.text + ',size: ' + word.size);
-    };
-
     Stomp.WebSocketClass = SockJS;
-
     var mq_username = "guest",
       mq_password = "guest",
       mq_vhost = "/",
       mq_url = 'http://localhost:15674/stomp',
-      mq_queue = "/queue/wordCloud";
+      mq_queue = "/queue/wordCloud3";
 
     function on_connect() {
       console.log(client);
@@ -35,35 +28,37 @@
     }
 
     function on_message(m) {
-      var message = JSON.parse(m.body);
-      var result = true;
-      if ($scope.words.length > 1) {
-        result = sortAndDeleteIfMoreWordsThan(message, 20);
-      }
-      if (result) {
-        var zname = 1;
-        for (var i = 0; i < $scope.words.length; i++) {
-          if ($scope.words[i].text == message.text) {
-            var newValue = parseInt($scope.words[i].size) + parseInt(message.size);
-            $scope.$apply(function () {
-              $scope.words[i].size = newValue;
-            });
-            zname = 0;
-          }
-        }
-        if (zname) {
-          $scope.$apply(function () {
-            $scope.words.push(message);
-          });
-        }
-      }
+      var jsonObj = JSON.parse('[' + m.body + ']');
+      $scope.words = [];
+      $scope.$apply(function () {
+        $scope.words = jsonObj;
+      });
     }
 
     var ws = new SockJS(mq_url);
     var client = Stomp.over(ws);
 
     (function init() {
-      loadMap();
+      var country = $rootScope.country;
+      $rootScope.country = undefined;
+      if (country != undefined) {
+        var url = encodeURI('api/country_tweets/get_tweets_for_country?country=' + country);
+        $http({
+          method: 'GET',
+          url: url
+        }).then(function successCallback(response) {
+          $scope.words = [];
+          for (var i = 0; i < response.data.length; i++) {
+            $scope.words.push(JSON.parse(response.data[i]));
+          }
+          console.log('WORDS', $scope.words);
+        }, function errorCallback(response) {
+          console.log('ERROR');
+        });
+      } else {
+        loadMap();
+      }
+
     })();
 
     function loadMap() {
@@ -75,41 +70,7 @@
         on_connect,
         on_connect_error,
         mq_vhost);
-
-    };
-
-    function sortAndDeleteIfMoreWordsThan(incomingMessage, numWords) {
-      console.log("GORE ", $scope.words.length);
-      $scope.words.sort(function (first, second) {
-        return parseInt(first.size) - parseInt(second.size);
-      });
-      if ($scope.words.length > numWords) {
-        if (incomingMessage.size > $scope.words[0].size) {
-          if (!containsWord(incomingMessage)) {
-            $scope.words.splice(0, 1);
-          }
-          return true;
-        } else if (incomingMessage.size <= $scope.words[0].size) {
-          if (containsWord(incomingMessage)) {
-            return true;
-          }
-          return false;
-        }
-      }
-      else {
-        return true;
-      }
     }
-
-    function containsWord(message) {
-      for (var i = 0; i < $scope.words.length; i++) {
-        if ($scope.words[i].text == message.text) {
-          return true
-        }
-      }
-      return false;
-    }
-
   }
 })(angular);
 
