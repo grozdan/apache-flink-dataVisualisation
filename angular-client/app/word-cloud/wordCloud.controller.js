@@ -16,7 +16,7 @@
       mq_password = "guest",
       mq_vhost = "/",
       mq_url = 'http://localhost:15674/stomp',
-      mq_queue = "/queue/wordCloud3";
+      mq_queue = "/queue/wordCloud4";
 
     function on_connect() {
       console.log(client);

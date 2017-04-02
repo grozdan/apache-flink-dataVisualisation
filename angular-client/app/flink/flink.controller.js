@@ -27,7 +27,7 @@
       mq_password = "guest",
       mq_vhost = "/",
       mq_url = 'http://localhost:15674/stomp',
-      mq_queue = "/queue/positions8";
+      mq_queue = "/queue/positions9";
 
     function on_connect() {
       console.log(client);
