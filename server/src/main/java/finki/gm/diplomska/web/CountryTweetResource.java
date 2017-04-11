@@ -30,12 +30,12 @@ public class CountryTweetResource {
     List<String> wordsInTweets = countryTweetService.createWordsFromTweets(tweetsForCountry);
     List<String> result = new ArrayList<>();
     Map<String, Integer> wordCountMap =
-        wordsInTweets.stream().collect(groupingBy(Function.identity(), summingInt(e -> 20)));
+        wordsInTweets.stream().collect(groupingBy(Function.identity(), summingInt(e -> 2)));
 
     wordCountMap = wordCountMap.entrySet().stream()
-        .filter(entry -> entry.getValue()>20)
+        //.filter(entry -> entry.getValue()>=20)
         .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-        .limit(100)
+        .limit(50)
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
             (e1, e2) -> e1, LinkedHashMap::new));
 

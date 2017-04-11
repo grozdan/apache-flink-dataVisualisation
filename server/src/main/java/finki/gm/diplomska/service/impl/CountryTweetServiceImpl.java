@@ -31,7 +31,7 @@ public class CountryTweetServiceImpl implements CountryTweetService {
     for (CountryTweet ct : tweetsForCountry) {
       StringTokenizer tokenizer = new StringTokenizer(ct.getTweet());
       while (tokenizer.hasMoreTokens()) {
-        String word = tokenizer.nextToken().trim().toLowerCase().replaceAll("[^A-Za-z0-9#]", "");
+        String word = tokenizer.nextToken().trim().toLowerCase();//.replaceAll("[^A-Za-z0-9#]", "");
         if (word.length() > 2) {
           resultList.add(word);
         }

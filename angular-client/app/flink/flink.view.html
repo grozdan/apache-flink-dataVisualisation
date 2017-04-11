@@ -1,29 +1,26 @@
-<div id="container" style="position: relative; width: 100%; height: 75%; background-color: #e6f7ff;"></div>
-<div class="row" style="background-color: #e6f7ff">
-  <div class="col-md-2" style="margin-top:-20%; margin-left:1%">
-    <table class="table table-striped"
-           style="max-height: 280px; font-weight: bold; overflow-y: scroll; display:table-caption; overflow-x: hidden; border: 2px solid #d6e9c6;">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>Country</th>
-        <th>Tweets</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr ng-repeat="row in tweetsPerCountry">
-        <td>{{$index+1}}</td>
-        <td>{{:: row.name}}</td>
-        <td>{{:: row.size}}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+<div id="container" style="position: relative; width: 100vw; height: 87vh; padding: 0; margin: 0; background-color: #838385;"></div>
 
-  <div class="panel panel-success col-md-offset-3 col-md-7" style="background-color: #000000;">
-    <label class="pull-left" style="color: white">Total tweets: {{counter}}</label>
-    <label class="pull-right" style="color: white">Tweets with location: {{locationCounter}}</label>
-    <textarea readonly id="textArea" rows="5"
-              style="width: 100%; background-color: #000000; color: #00b300; border: none;">{{textArea}}</textarea>
+<div class="row" style="background-color: #838385; height: 13vh; margin-top: -3%; padding: 0">
+  <div class="col-md-12" style="background-color: #838385;">
+    <!--<label class="pull-left" style="color: white">Total tweets: {{counter}}</label>-->
+    <!--<label class="pull-right" style="color: white">Tweets with location: {{locationCounter}}</label>-->
+    <div class="row">
+      <!--<div class="col-md-2" style="float: left; ">-->
+        <!--<p style=" text-align: center; color: black; font-size: 14px; font-weight: bold">Tweets from database:-->
+          <!--{{counterInDatabase}}</p>-->
+      <!--</div>-->
+      <!--<div class="col-md-2" style="float: left; ">-->
+        <!--<p style=" text-align: center; color: black; font-size: 14px; font-weight: bold">New tweets:-->
+          <!--{{locationCounter}}</p>-->
+      <!--</div>-->
+      <div class="col-md-2">
+        <p style=" text-align: center; color: black; font-size: 14px; font-weight: bold">Total tweets: {{total}}</p>
+      </div>
+    </div>
+    <div class="row">
+      <div ng-repeat="row in tweetsPerCountry" class="col-md-2" style="float: left;">
+        <p style=" text-align: center; color: black;">{{row.name}}: {{row.size}}</p>
+      </div>
+    </div>
   </div>
 </div>

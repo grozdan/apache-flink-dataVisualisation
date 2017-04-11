@@ -67,9 +67,24 @@
       client.connect(
         mq_username,
         mq_password,
-        on_connect,
         on_connect_error,
         mq_vhost);
+    }
+    $scope.getCloud = function () {
+      var url = encodeURI('api/word_cloud');
+
+      $http({
+        method: 'GET',
+        url: url
+      }).then(function successCallback(response) {
+        console.log('WORDS', response.data);
+        $scope.words = [];
+        for (var i = 0; i < response.data.length; i++) {
+          $scope.words.push(response.data[i]);
+        }
+      }, function errorCallback(response) {
+        console.log('ERROR');
+      });
     }
   }
 })(angular);

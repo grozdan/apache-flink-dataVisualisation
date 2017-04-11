@@ -6,7 +6,8 @@
       'ui.router',
       'ui.select',
       'ngResource',
-      'angular-d3-word-cloud'
+      'angular-d3-word-cloud',
+      'rzModule'
     ]);
 
 })(angular);

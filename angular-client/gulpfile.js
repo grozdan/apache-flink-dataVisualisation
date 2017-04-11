@@ -35,7 +35,9 @@ var FONTS_LIB = [
 var CSS_LIB = [
   'bower_components/bootstrap/dist/css/bootstrap.css',
   'bower_components/components-font-awesome/css/font-awesome.min.css',
-  'bower_components/angular-ui-select/dist/select.css'];
+  'bower_components/angular-ui-select/dist/select.css',
+  'node_modules/angularjs-slider/dist/rzslider.css'
+];
 
 var JS_LIB = [
   'bower_components/jquery/dist/jquery.min.js',
@@ -46,9 +48,13 @@ var JS_LIB = [
   'bower_components/angular-ui-select/dist/select.js',
   'bower_components/angular-resource/angular-resource.js',
   'node_modules/d3/d3.min.js',
-  'node_modules/d3/node_modules/d3/d3.min.js',
+  // 'node_modules/d3/node_modules/d3/d3.min.js',
   'node_modules/d3-cloud/build/d3.layout.cloud.js',
-  'node_modules/angular-d3-word-cloud/dist/angular-word-cloud.min.js'
+  'node_modules/angular-d3-word-cloud/dist/angular-word-cloud.min.js',
+  'node_modules/angularjs-slider/dist/rzslider.js',
+  'node_modules/nvd3/build/nv.d3.js',
+  ''
+
   //'node_modules/sockjs/lib/sockjs.js'
 ];
 

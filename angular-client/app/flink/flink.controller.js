@@ -15,7 +15,8 @@
     $scope.textArea = "";
     $scope.counter = 0;
     $scope.processedTweets = [];
-    $scope.locationCounter = 0;
+    $scope.counterInDatabase = 0;
+    $scope.total = 0
     var counterLocationTweets = 0;
     var bombs = [];
     var oldBombs = [];
@@ -40,11 +41,7 @@
 
     function on_message(m) {
       var message = JSON.parse(m.body);
-      tweetCounter += 1;
-      $scope.$apply(function () {
-        $scope.counter = tweetCounter;
-      });
-
+      $scope.total++;
       createBubble(message);
     }
 
@@ -98,15 +95,18 @@
 
       if (message.latitude != undefined) {
         counterLocationTweets += 1;
-        $scope.$apply(function () {
-          $scope.locationCounter = counterLocationTweets;
-        });
         var url = encodeURI('http://ws.geonames.org/countryCodeJSON?lat=' + message.latitude + '&lng='
           + message.longitude + '&username=goki');
 
         var newBubble = {};
         newBubble.name = message.name;
-        newBubble.radius = message.radius;
+        if (bombs.length <= 300) {
+          newBubble.radius = 4;
+        }
+        else if (bombs.length > 300) {
+          newBubble.radius = 3;
+        }
+
         newBubble.longitude = message.longitude;
         newBubble.latitude = message.latitude;
         newBubble.borderColor = "#ff0000";
@@ -120,6 +120,7 @@
           addToCountryMap(newBubble);
           map.bubbles(bombs);
         }, function errorCallback(response) {
+          //if country is not found
           bombs.push(newBubble);
           map.bubbles(bombs);
           console.log(response);
@@ -127,18 +128,6 @@
         });
       }
     }
-
-    // $scope.clickBtn = function () {
-    //   console.log("called");
-    //   $http({
-    //     method: 'get',
-    //     url: '/api/country_tweets'
-    //   }).then(function successCallback(response) {
-    //     console.log(response);
-    //   }, function errorCallback(response) {
-    //     console.log(response);
-    //   });
-    // };
 
     function getTextForTweets() {
       var text = "";
@@ -181,21 +170,25 @@
         method: 'GET',
         url: url
       }).then(function successCallback(response) {
+        $scope.total += response.data.length;
         for (var i = 0; i < response.data.length; i++) {
           var newBubble = {};
           newBubble.name = response.data[i].tweet;
-          newBubble.radius = response.data[i].radius;
+          if (response.data.length <= 300) {
+            newBubble.radius = 4;
+          }
+          else if (response.data.length > 300) {
+            newBubble.radius = 3;
+          }
           newBubble.longitude = response.data[i].longitude;
           newBubble.latitude = response.data[i].latitude;
           newBubble.country = response.data[i].country;
           newBubble.borderColor = "#ffff33";
           console.log(newBubble);
           bombs.push(newBubble);
-          counterLocationTweets += 1;
-          $scope.locationCounter = counterLocationTweets;
           addToCountryMap(newBubble);
-          map.bubbles(bombs);
         }
+        map.bubbles(bombs);
       }, function errorCallback(response) {
 
         console.log(response);
