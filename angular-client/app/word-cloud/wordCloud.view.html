@@ -1,10 +1,26 @@
-<div>
-  <div id="wordsCloud">
-    <word-cloud words="words" width="500" height="500" padding="5">
-    </word-cloud>
+<div style="background-image: url('../map3.jpg');
+   height: 100%;
+    z-index: -1;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;">
+  <div class="row">
+    <div ng-class="!hasCountry() ? 'col-md-5' : 'col-md-6'" id="wordsCloud">
+      <word-cloud words="words" width="600" height="800" padding="5">
+      </word-cloud>
+    </div>
+    <div ng-class="!hasCountry() ? 'col-md-5' : 'col-md-6'">
+      <nvd3 options="options" data="barChartData"></nvd3>
+    </div>
+    <div ng-if="!hasCountry()" class="col-md-2" style="height: 740px; margin-top: 30px; margin-bottom: 30px;">
+      <rzslider rz-slider-model='slider.minValue'
+                rz-slider-high='slider.maxValue'
+                rz-slider-options='slider.options'></rzslider>
+    </div>
   </div>
-  <div>
-    <rzslider rz-slider-model="150"></rzslider>
-  </div>
-  <button ng-click="getCloud()">Get Cloud</button>
+
+
+  <!--<button ng-click="getCloud()">Get Cloud</button>-->
 </div>
+

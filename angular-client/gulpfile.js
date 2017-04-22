@@ -53,7 +53,7 @@ var JS_LIB = [
   'node_modules/angular-d3-word-cloud/dist/angular-word-cloud.min.js',
   'node_modules/angularjs-slider/dist/rzslider.js',
   'node_modules/nvd3/build/nv.d3.js',
-  ''
+  'node_modules/angular-nvd3/dist/angular-nvd3.js'
 
   //'node_modules/sockjs/lib/sockjs.js'
 ];

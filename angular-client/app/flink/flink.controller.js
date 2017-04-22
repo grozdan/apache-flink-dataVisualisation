@@ -28,7 +28,7 @@
       mq_password = "guest",
       mq_vhost = "/",
       mq_url = 'http://localhost:15674/stomp',
-      mq_queue = "/queue/positions9";
+      mq_queue = "/queue/positions10";
 
     function on_connect() {
       console.log(client);
@@ -57,8 +57,8 @@
       map = new Datamap({
         element: document.getElementById('container'),
         fills: {
-          defaultFill: "#000033",
-          authorHasTraveledTo: "#00b300"
+          //defaultFill: "#000033",
+          defaultFill: "#07141f",
         },
         done: function (datamap) {
           datamap.svg.selectAll('.datamaps-subunit').on('click', function (geography) {
@@ -84,14 +84,14 @@
     }
 
     function createBubble(message) {
-      $scope.processedTweets.push(message.name);
-      if ($scope.processedTweets.length > 50) {
-        $scope.processedTweets.splice(0, 1);
-      }
-
-      $scope.$apply(function () {
-        $scope.textArea = getTextForTweets();
-      });
+      // $scope.processedTweets.push(message.name);  text area code
+      // if ($scope.processedTweets.length > 50) {
+      //   $scope.processedTweets.splice(0, 1);
+      // }
+      //
+      // $scope.$apply(function () {
+      //   $scope.textArea = getTextForTweets();
+      // });
 
       if (message.latitude != undefined) {
         counterLocationTweets += 1;
@@ -183,16 +183,14 @@
           newBubble.longitude = response.data[i].longitude;
           newBubble.latitude = response.data[i].latitude;
           newBubble.country = response.data[i].country;
-          newBubble.borderColor = "#ffff33";
+          newBubble.borderColor = "#ffffff";//#ffff33
           console.log(newBubble);
           bombs.push(newBubble);
           addToCountryMap(newBubble);
         }
         map.bubbles(bombs);
       }, function errorCallback(response) {
-
         console.log(response);
-
       });
     }
   }

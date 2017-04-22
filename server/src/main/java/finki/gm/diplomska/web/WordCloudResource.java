@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/word_cloud", produces = "application/json")
 public class WordCloudResource {
 
+  public static final int SLIDER_VALUES_NUMBER = 20;
+
   @Autowired
   WordCloudService wordCloudService;
 
@@ -41,14 +43,44 @@ public class WordCloudResource {
       return new HashMap<String, String>();
     }).collect(Collectors.toList());
 
-    JSONArray arr = new JSONArray();
+    JSONArray cloudArray = new JSONArray();
+    JSONArray barChartArray = new JSONArray();
+    boolean scaleSizeFlag = true;
+    double doubleScaledSize = 0;
+    boolean scaleLarger = false;
     for (Map.Entry<String, String> entry : listMaps.get(0).entrySet()) {
-      JSONObject jobj = new JSONObject();
-      jobj.put("text", entry.getKey());
-      jobj.put("size", Integer.parseInt(entry.getValue()) * 5);
-      arr.add(jobj);
+      int wordSize = Integer.parseInt(entry.getValue());
+      if (scaleSizeFlag) {
+        if (wordSize < 100) {
+          doubleScaledSize = 100 / wordSize;
+          scaleLarger = true;
+        } else {
+          doubleScaledSize = wordSize * 1.0 / 100;
+          scaleLarger = false;
+        }
+        scaleSizeFlag = false;
+      }
+      int scaledSize = (int) Math.round(doubleScaledSize);
+      JSONObject cloudObj = wordCloudService.createWordJsonObject(entry.getKey(), wordSize, scaledSize, scaleLarger);
+      cloudArray.add(cloudObj);
+
+      JSONObject barChartObj =
+          wordCloudService.createJsonObjectForBarChart(entry.getKey(), Integer.parseInt(entry.getValue()));
+      barChartArray.add(barChartObj);
     }
-    System.err.println(arr.toString());
-    return arr.toString();
+    JSONObject barChartToReturnObj = new JSONObject();
+    barChartToReturnObj.put("key", "Words Number");
+    barChartToReturnObj.put("values", barChartArray);
+
+    JSONObject wordCloudBarChartObj = new JSONObject();
+    wordCloudBarChartObj.put("wordCloud", cloudArray);
+    wordCloudBarChartObj.put("barChart", barChartToReturnObj);
+    System.err.println(wordCloudBarChartObj.toString());
+    return wordCloudBarChartObj.toString();
   }
+  @RequestMapping(value = "/get_dates_for_slider", method = RequestMethod.GET)
+  public String getDatesForSlider() {
+    return wordCloudService.getDatesForSlider(SLIDER_VALUES_NUMBER);
+  }
+
 }

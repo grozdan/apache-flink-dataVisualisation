@@ -7,7 +7,8 @@
       'ui.select',
       'ngResource',
       'angular-d3-word-cloud',
-      'rzModule'
+      'rzModule',
+      'nvd3'
     ]);
 
 })(angular);
