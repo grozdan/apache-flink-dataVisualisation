@@ -1,20 +1,19 @@
 package finki.gm.diplomska.web;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import finki.gm.diplomska.model.WordCloudModel;
 import finki.gm.diplomska.repository.WordCloudRepository;
 import finki.gm.diplomska.service.WordCloudService;
-import java.io.IOException;
-import java.util.HashMap;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.*;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,58 +28,36 @@ public class WordCloudResource {
   @Autowired
   WordCloudRepository wordCloudRepository;
 
-  @RequestMapping(method = RequestMethod.GET)
-  public String getTweetsForCountry() {
-    List<WordCloudModel> allWordClouds = wordCloudRepository.findAll();
-    List<Map<String, String>> listMaps = allWordClouds.stream().map(wc -> {
-      try {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(wc.getTweetsPerCountry(), new TypeReference<Map<String, String>>() {
-        });
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return new HashMap<String, String>();
-    }).collect(Collectors.toList());
+  //@RequestMapping(method = RequestMethod.GET)
+  //public String getWordCloud() {
+  //  List<WordCloudModel> allWordClouds = wordCloudRepository.findAll();
+  //
+  //  List<Map<String, String>> listMaps = wordCloudService.createMapFromWordCloudObjects(allWordClouds);
+  //
+  //
+  //}
 
-    JSONArray cloudArray = new JSONArray();
-    JSONArray barChartArray = new JSONArray();
-    boolean scaleSizeFlag = true;
-    double doubleScaledSize = 0;
-    boolean scaleLarger = false;
-    for (Map.Entry<String, String> entry : listMaps.get(0).entrySet()) {
-      int wordSize = Integer.parseInt(entry.getValue());
-      if (scaleSizeFlag) {
-        if (wordSize < 100) {
-          doubleScaledSize = 100 / wordSize;
-          scaleLarger = true;
-        } else {
-          doubleScaledSize = wordSize * 1.0 / 100;
-          scaleLarger = false;
-        }
-        scaleSizeFlag = false;
-      }
-      int scaledSize = (int) Math.round(doubleScaledSize);
-      JSONObject cloudObj = wordCloudService.createWordJsonObject(entry.getKey(), wordSize, scaledSize, scaleLarger);
-      cloudArray.add(cloudObj);
-
-      JSONObject barChartObj =
-          wordCloudService.createJsonObjectForBarChart(entry.getKey(), Integer.parseInt(entry.getValue()));
-      barChartArray.add(barChartObj);
-    }
-    JSONObject barChartToReturnObj = new JSONObject();
-    barChartToReturnObj.put("key", "Words Number");
-    barChartToReturnObj.put("values", barChartArray);
-
-    JSONObject wordCloudBarChartObj = new JSONObject();
-    wordCloudBarChartObj.put("wordCloud", cloudArray);
-    wordCloudBarChartObj.put("barChart", barChartToReturnObj);
-    System.err.println(wordCloudBarChartObj.toString());
-    return wordCloudBarChartObj.toString();
-  }
   @RequestMapping(value = "/get_dates_for_slider", method = RequestMethod.GET)
   public String getDatesForSlider() {
     return wordCloudService.getDatesForSlider(SLIDER_VALUES_NUMBER);
   }
 
+  @RequestMapping(value = "/slider_values", method = RequestMethod.GET)
+  public String getWordCloudsBetweenSliderValues(@RequestParam(value = "fromTime") String fromTime,
+      @RequestParam(value = "toTime") String toTime) throws ParseException {
+
+    System.err.println(fromTime);
+    DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date fromDate = formatter.parse(fromTime);
+    Timestamp timestampFrom = new Timestamp(fromDate.getTime());
+    Date toDate = formatter.parse(toTime);
+    Timestamp timestampTo = new Timestamp(toDate.getTime());
+
+    List<WordCloudModel> wordCloudModels = wordCloudService.getWordCloudsBetweenDates(timestampFrom, timestampTo);
+    List<Map<String, String>> listMaps = wordCloudService.createMapFromWordCloudObjects(wordCloudModels);
+    Map<String, Integer> mergedMapFromMultipleWordClouds =
+        wordCloudService.createMergedMapFromMultipleWordClouds(listMaps);
+
+    return wordCloudService.createWordCloudAndBarChartObjects(mergedMapFromMultipleWordClouds);
+  }
 }

@@ -15,14 +15,19 @@
       <!--<p style=" text-align: center; color: black; font-size: 14px; font-weight: bold">New tweets:-->
       <!--{{locationCounter}}</p>-->
       <!--</div>-->
-      <div class="col-md-2">
-        <p style=" text-align: center; color: black; font-size: 14px; font-weight: bold">Total tweets: {{total}}</p>
+      <div style="text-align: center">
+        <p style=" text-align: center; color: black; font-size: 1.5em; font-weight: bold">Total tweets: {{total}}</p>
       </div>
     </div>
     <div class="row">
-      <div ng-repeat="row in tweetsPerCountry" class="col-md-2" style="float: left;">
-        <p style=" text-align: center; color: black;">{{row.name}}: {{row.size}}</p>
-      </div>
+      <!--<div ng-repeat="row in tweetsPerCountry" class="col-md-2" style="float: left;">-->
+      <!--<p style=" text-align: center; font-weight: bold; color: black;">{{row.name}}: {{row.size}}</p>-->
+      <!--</div>-->
+      <span ng-repeat="row in tweetsPerCountry" class="col-md-2" style="float: left;">
+        <p
+          style=" text-align: center; font-weight: bold; color: black;">{{row.name}}: {{row.size}}
+        </p>
+      </span>
     </div>
   </div>
 </div>

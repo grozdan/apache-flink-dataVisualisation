@@ -56,4 +56,11 @@ public class WordCloudModel {
   public void setDateTime(Timestamp dateTime) {
     this.date = dateTime;
   }
+
+  @Override
+  public String toString() {
+    return "WordCloudModel{" +
+        "date=" + date +
+        '}';
+  }
 }

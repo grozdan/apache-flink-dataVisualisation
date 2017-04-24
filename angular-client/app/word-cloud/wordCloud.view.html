@@ -1,4 +1,4 @@
-<div style="background-image: url('../map3.jpg');
+<div style="background-image: url('../worldMap2.png');
    height: 100%;
     z-index: -1;
     /* Center and scale the image nicely */
@@ -7,7 +7,11 @@
     background-size: cover;">
   <div class="row">
     <div ng-class="!hasCountry() ? 'col-md-5' : 'col-md-6'" id="wordsCloud">
-      <word-cloud words="words" width="600" height="800" padding="5">
+      <div class="col-md-offset-1">
+        <h2 ng-if="hasCountry()">Words appearance in <span style="font-weight: 900">{{selectedCountry}}</span></h2>
+        <h2 ng-if="!hasCountry()">Words appearance in <span style="font-weight: 900">all tweets</span></h2>
+      </div>
+      <word-cloud words="words" width="700" height="700" padding="5">
       </word-cloud>
     </div>
     <div ng-class="!hasCountry() ? 'col-md-5' : 'col-md-6'">
@@ -19,7 +23,9 @@
                 rz-slider-options='slider.options'></rzslider>
     </div>
   </div>
-
+  <div ng-if="hasCountry()" class="row" style="text-align: center">
+    <button class="btn btn-default" ng-click="getAllTweetsWordCloud()">Get all tweets word cloud</button>
+  </div>
 
   <!--<button ng-click="getCloud()">Get Cloud</button>-->
 </div>

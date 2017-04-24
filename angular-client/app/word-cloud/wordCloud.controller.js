@@ -5,13 +5,14 @@
     .module('angular-client')
     .controller('WordCloudController', WordCloudController);
 
-  WordCloudController.$inject = ['$scope', '$stateParams', '$state', '$rootScope', '$http'];
+  WordCloudController.$inject = ['$scope', '$timeout', '$stateParams', '$state', '$rootScope', '$http'];
 
-  function WordCloudController($scope, $stateParams, $state, $rootScope, $http) {
+  function WordCloudController($scope, $timeout, $stateParams, $state, $rootScope, $http) {
     var vm = this;
     $scope.words = [];
     $scope.barChartData = [];
-    $scope.hasCountry = false;
+    $scope.slider = {};
+    $scope.selectedCountry = "";
 
     // Stomp.WebSocketClass = SockJS;
     // var mq_username = "guest",
@@ -42,29 +43,14 @@
 
     //slider code
     $scope.sliderOnChage = function () {
-      console.log("min value: ", $scope.slider.minValue, " Max value: ", $scope.slider.maxValue);
-      console.log();
-
+      $timeout(function () {
+        console.log("min value: ", $scope.slider.minValue, " Max value: ", $scope.slider.maxValue);
+        createSliderWordCloudRequest($scope.slider.minValue, $scope.slider.maxValue);
+      }, 500);
     };
 
-    $scope.slider = {
-      // minValue: 1,
-      // maxValue: 20,
-      options: {
-        // floor: 1,
-        // ceil: 20,
-        vertical: true,
-
-        step: 1,
-        noSwitching: true,
-        showTicksValues: true,
-        onChange: $scope.sliderOnChage
-      }
-    };
-
-    $scope.initSliderValues = function () {
+    $scope.initSliderValuesAndGetCloud = function () {
       var url = encodeURI('api/word_cloud/get_dates_for_slider');
-
       $http({
         method: 'GET',
         url: url
@@ -76,6 +62,8 @@
           $scope.slider.options.floor = response.data[0];
           $scope.slider.options.ceil = response.data[response.data.length - 1];
           $scope.slider.options.stepsArray = response.data;
+
+          createSliderWordCloudRequest($scope.slider.minValue, $scope.slider.maxValue);
         }
       }, function errorCallback(response) {
         console.log('ERROR DATES');
@@ -83,22 +71,24 @@
     };
 
     $scope.getCloud = function () {
-      var url = encodeURI('api/word_cloud');
+      // var url = encodeURI('api/word_cloud');
+      //
+      // $http({
+      //   method: 'GET',
+      //   url: url
+      // }).then(function successCallback(response) {
+      //   console.log('WORDS', response.data);
+      //   $scope.words = [];
+      //   $scope.barChartData = [];
+      //   $scope.barChartData.push(response.data.barChart);
+      //   for (var i = 0; i < response.data.wordCloud.length; i++) {
+      //     $scope.words.push(response.data.wordCloud[i]);
+      //   }
+      // }, function errorCallback(response) {
+      //   console.log('ERROR');
+      // });
+      console.log('VALUEEESSS', $scope.slider.minValue, $scope.slider.maxValue);
 
-      $http({
-        method: 'GET',
-        url: url
-      }).then(function successCallback(response) {
-        console.log('WORDS', response.data);
-        $scope.words = [];
-        $scope.barChartData = [];
-        $scope.barChartData.push(response.data.barChart);
-        for (var i = 0; i < response.data.wordCloud.length; i++) {
-          $scope.words.push(response.data.wordCloud[i]);
-        }
-      }, function errorCallback(response) {
-        console.log('ERROR');
-      });
     };
 
     $scope.hasCountry = function () {
@@ -106,11 +96,25 @@
     };
 
     (function init() {
-      // if($stateParams.country)
-      // var country = $rootScope.country;
-      // $rootScope.country = undefined;
+
+      $scope.slider = {
+        // minValue: 1,
+        // maxValue: 20,
+        options: {
+          // floor: 1,
+          // ceil: 20,
+          vertical: true,
+
+          step: 1,
+          noSwitching: true,
+          showTicksValues: true,
+          onChange: $scope.sliderOnChage
+        }
+      };
+
       if ($stateParams.country) {
-        var url = encodeURI('api/country_tweets/get_tweets_for_country?country=' + $stateParams.country);
+        $scope.selectedCountry = $stateParams.country;
+        var url = encodeURI('api/country_tweets/get_tweets_for_country?country=' + $scope.selectedCountry);
         $http({
           method: 'GET',
           url: url
@@ -128,27 +132,25 @@
           for (var i = 0; i < response.data.wordCloud.length; i++) {
             $scope.words.push(response.data.wordCloud[i]);
           }
-
         }, function errorCallback(response) {
           console.log('ERROR');
         });
       } else {
         // loadMap();
-        $scope.initSliderValues();
-        $scope.getCloud();
-      }
+        $scope.initSliderValuesAndGetCloud();
 
+      }
     })();
 
-    function loadMap() {
-      client.heartbeat.outgoing = 0;
-      client.heartbeat.incoming = 0;
-      client.connect(
-        mq_username,
-        mq_password,
-        on_connect_error,
-        mq_vhost);
-    }
+    // function loadMap() {
+    //   client.heartbeat.outgoing = 0;
+    //   client.heartbeat.incoming = 0;
+    //   client.connect(
+    //     mq_username,
+    //     mq_password,
+    //     on_connect_error,
+    //     mq_vhost);
+    // }
 
     //barchart options
     $scope.options = {
@@ -178,5 +180,39 @@
       }
     };
 
+    function createSliderWordCloudRequest(fromTime, toTime) {
+      if (fromTime.value) {
+        fromTime = fromTime.value;
+      }
+      if (toTime.value) {
+        toTime = toTime.value;
+      }
+
+      $http.get("api/word_cloud/slider_values", {params: {"fromTime": fromTime, "toTime": toTime}})
+        .then(function successCallback(response) {
+          console.log('WORDS', response.data);
+          $scope.words = [];
+          $scope.barChartData = [];
+          $scope.barChartData.push(response.data.barChart);
+          for (var i = 0; i < response.data.wordCloud.length; i++) {
+            $scope.words.push(response.data.wordCloud[i]);
+          }
+        }, function errorCallback(response) {
+          console.log('ERROR');
+        });
+    }
+
+    $scope.getAllTweetsWordCloud = function () {
+      $stateParams.country = undefined;
+      $scope.hasCountry();
+      $scope.initSliderValuesAndGetCloud();
+    }
+
+    $scope.setBoldStyles = function () {
+      alert("called");
+      angular.element('.tick').css('font-weight', 700);
+      angular.element('.text').css('font-weight', 700);
+    }
   }
-})(angular);
+})
+(angular);

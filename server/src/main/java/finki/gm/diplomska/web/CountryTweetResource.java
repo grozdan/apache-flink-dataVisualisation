@@ -22,6 +22,8 @@ import static java.util.stream.Collectors.*;
 @RequestMapping(value = "/api/country_tweets", produces = "application/json")
 public class CountryTweetResource {
 
+  public static final double MAX_WORD_SIZE_FOR_WORD_CLOUD = 150.0;
+
   @Autowired
   CountryTweetService countryTweetService;
 
@@ -36,10 +38,10 @@ public class CountryTweetResource {
     JSONArray barChartArray = new JSONArray();
 
     Map<String, Integer> wordCountMap =
-        wordsInTweets.stream().collect(groupingBy(Function.identity(), summingInt(e -> 2)));
+        wordsInTweets.stream().collect(groupingBy(Function.identity(), summingInt(e -> 1)));
 
     wordCountMap = wordCountMap.entrySet().stream()
-        //.filter(entry -> entry.getValue()>=20)
+        //.filter(entry -> entry.getValue()>=2)
         .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
         .limit(50)
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
@@ -51,24 +53,25 @@ public class CountryTweetResource {
     for (Map.Entry<String, Integer> entry : wordCountMap.entrySet()) {
       int wordSize = entry.getValue();
       if (scaleSizeFlag) {
-        if (wordSize < 100) {
-          doubleScaledSize = 100 / wordSize;
+        if (wordSize < MAX_WORD_SIZE_FOR_WORD_CLOUD) {
+          doubleScaledSize = MAX_WORD_SIZE_FOR_WORD_CLOUD / wordSize;
           scaleLarger = true;
         } else {
-          doubleScaledSize = wordSize * 1.0 / 100;
+          doubleScaledSize = wordSize * 1.0 / MAX_WORD_SIZE_FOR_WORD_CLOUD;
           scaleLarger = false;
         }
         scaleSizeFlag = false;
       }
-      int scaledSize = (int) Math.round(doubleScaledSize);
-      JSONObject obj = wordCloudService.createWordJsonObject(entry.getKey(), wordSize, scaledSize, scaleLarger);
+      //int scaledSize = (int) Math.round(doubleScaledSize);
+      JSONObject obj =
+          wordCloudService.createWordCloudJsonObject(entry.getKey(), wordSize, doubleScaledSize, scaleLarger);
       cloudArray.add(obj);
 
       JSONObject barChartObj = wordCloudService.createJsonObjectForBarChart(entry.getKey(), entry.getValue());
       barChartArray.add(barChartObj);
     }
     JSONObject barChartToReturnObj = new JSONObject();
-    barChartToReturnObj.put("key", "Words Number");
+    barChartToReturnObj.put("key", "Words Number ");
     barChartToReturnObj.put("values", barChartArray);
 
     JSONObject wordCloudBarChartObj = new JSONObject();
