@@ -5,10 +5,10 @@
     .module('angular-client')
     .controller('FlinkController', FlinkController);
 
-  FlinkController.$inject = ['$scope', '$log', '$http', '$state', '$rootScope'];
+  FlinkController.$inject = ['$scope', '$window', '$log', '$http', '$state', '$rootScope'];
 
   /* @ngInject */
-  function FlinkController($scope, $log, $http, $state, $rootScope) {
+  function FlinkController($scope, $window, $log, $http, $state, $rootScope) {
     var vm = this;
     var map;
     var tweetCounter = 0;
@@ -19,8 +19,9 @@
     $scope.total = 0
     var counterLocationTweets = 0;
     var bombs = [];
-    var oldBombs = [];
+    var i = 1;
     $scope.tweetsPerCountry = [];
+    $scope.tweetsPerCountryPom = []
 
     Stomp.WebSocketClass = SockJS;
 
@@ -28,7 +29,7 @@
       mq_password = "guest",
       mq_vhost = "/",
       mq_url = 'http://localhost:15674/stomp',
-      mq_queue = "/queue/positions10";
+      mq_queue = "/queue/positions17";
 
     function on_connect() {
       console.log(client);
@@ -43,6 +44,7 @@
       var message = JSON.parse(m.body);
       $scope.total++;
       createBubble(message);
+      console.log(i++ + ". " + message);
     }
 
     var ws = new SockJS(mq_url);
@@ -58,14 +60,14 @@
         element: document.getElementById('container'),
         fills: {
           //defaultFill: "#000033",
-          defaultFill: "#07141f",
+          defaultFill: "#07141f"
         },
         done: function (datamap) {
           datamap.svg.selectAll('.datamaps-subunit').on('click', function (geography) {
             var countryName = geography.properties.name;
             var obj = {};
             obj.country = countryName;
-            $rootScope.country = countryName
+            $rootScope.country = countryName;
             $state.go('wordCloud', obj);
           });
         }
@@ -115,7 +117,7 @@
           url: url
         }).then(function successCallback(response) {
           newBubble.country = response.data.countryName;
-          console.log(newBubble);
+          // console.log(newBubble);
           bombs.push(newBubble);
           addToCountryMap(newBubble);
           map.bubbles(bombs);
@@ -123,8 +125,8 @@
           //if country is not found
           bombs.push(newBubble);
           map.bubbles(bombs);
-          console.log(response);
-          console.log(newBubble);
+          // console.log(response);
+          // console.log(newBubble);
         });
       }
     }
@@ -161,7 +163,6 @@
         }
         return first.name - second.name;
       });
-
     }
 
     function loadTweetsFromDatabase() {
@@ -184,11 +185,23 @@
           newBubble.latitude = response.data[i].latitude;
           newBubble.country = response.data[i].country;
           newBubble.borderColor = "#ffffff";//#ffff33
-          console.log(newBubble);
+          // console.log(newBubble);
           bombs.push(newBubble);
           addToCountryMap(newBubble);
         }
         map.bubbles(bombs);
+      }, function errorCallback(response) {
+        console.log(response);
+      });
+    }
+
+    $window.onunload = function () {
+      var url = encodeURI('api/country_tweets/clear_tweets');
+      $http({
+        method: 'GET',
+        url: url
+      }).then(function successCallback(response) {
+
       }, function errorCallback(response) {
         console.log(response);
       });

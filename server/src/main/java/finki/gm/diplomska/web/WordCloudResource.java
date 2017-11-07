@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/word_cloud", produces = "application/json")
+@RequestMapping(value = "/api/word_cloud", produces = {"application/json; charset=UTF-8"})
 public class WordCloudResource {
 
   public static final int SLIDER_VALUES_NUMBER = 20;

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.*;
+import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +31,14 @@ public class CountryTweetResource {
   @Autowired
   WordCloudService wordCloudService;
 
-  @RequestMapping(value = "/get_tweets_for_country", method = RequestMethod.GET)
-  public String getTweetsForCountry(@RequestParam("country") String country) {
+  @RequestMapping(value = "/get_tweets_for_country", method = RequestMethod.GET, produces = {
+      "application/json; charset=UTF-8"})
+  public String getTweetsForCountry(@RequestParam("country") String country, HttpServletResponse response) {
     List<CountryTweet> tweetsForCountry = countryTweetService.getTweetsForCountry(country);
     List<String> wordsInTweets = countryTweetService.createWordsFromTweets(tweetsForCountry);
     JSONArray cloudArray = new JSONArray();
     JSONArray barChartArray = new JSONArray();
-
+    response.setCharacterEncoding("UTF-8");
     Map<String, Integer> wordCountMap =
         wordsInTweets.stream().collect(groupingBy(Function.identity(), summingInt(e -> 1)));
 
@@ -81,9 +83,14 @@ public class CountryTweetResource {
     return wordCloudBarChartObj.toString();
   }
 
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(method = RequestMethod.GET, produces = {"application/json; charset=UTF-8"})
   public List<CountryTweet> getAllTweets() {
     return countryTweetService.getAllTweets();
+  }
+
+  @RequestMapping(value = "/clear_tweets", method = RequestMethod.GET)
+  public void deleteAllTweets() {
+    System.err.println("VLEZEE");
   }
 
   //@RequestMapping(value = "/add_tweet_for_country", method = RequestMethod.POST)

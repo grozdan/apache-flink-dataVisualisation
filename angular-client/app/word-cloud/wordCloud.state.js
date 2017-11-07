@@ -10,7 +10,7 @@
   function registerState($stateProvider) {
 
     $stateProvider.state('wordCloud', {
-      url: '/wordCloud:country',
+      url: '/wordCloud/:country',
       templateUrl: 'app/word-cloud/wordCloud.view.html',
       controller: 'WordCloudController',
       controllerAs: 'vm'
